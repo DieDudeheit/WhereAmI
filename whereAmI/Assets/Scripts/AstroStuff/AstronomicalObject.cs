@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
@@ -9,8 +12,8 @@ using UnityEngine.Serialization;
 public class AstronomicalObject : MonoBehaviour
 {
     
-    [Header("Basics")]
-    public string name;
+    [FormerlySerializedAs("name")] [Header("Basics")]
+    public string planetName;
     
     /// <summary>
     ///Diameter in kilometer
@@ -20,7 +23,7 @@ public class AstronomicalObject : MonoBehaviour
     /// CurrentProgress in Days
     /// </summary>
     public float currentProgress;
-    
+
     #region easyView
 
         [Header("Easy view")]
@@ -40,7 +43,6 @@ public class AstronomicalObject : MonoBehaviour
     #endregion
 
     public List<AstronomicalObject> _astronomicalObjects = new List<AstronomicalObject>();
-    private List<KeyValuePair<string, string>> information = new List<KeyValuePair<string, string>>();
 
     public virtual void Init(int index)
     {
@@ -48,6 +50,7 @@ public class AstronomicalObject : MonoBehaviour
         SetTranform();
         InitChilds();
         SetCircle();
+        SetUI();
     }
 
     public void SetTranform()
@@ -58,12 +61,12 @@ public class AstronomicalObject : MonoBehaviour
         //Scaling
         float normalizedScaleValue = diameter - diameter * GlobalManager.instance._global_NormalizeScale; 
         transform.localScale = Vector3.one * GlobalManager.instance._global_NormalizeScale + Vector3.one * (normalizedScaleValue/1000000.0f);
-        transform.localScale *= GlobalManager.instance._global_ObjScale;
+        transform.localScale *= GlobalManager.instance._global_Scale * GlobalManager.instance._global_ObjScale;
         
         //diameter
         float normalizedOrbitRadius = _easyView_OrbitRadius - _easyView_OrbitRadius * Mathf.Pow(GlobalManager.instance._global_NormalizeDistance, 0.25f);
         _easyView_OrbitRadius_Current = systemIndex * GlobalManager.instance._global_NormalizeDistance + normalizedOrbitRadius;
-        _easyView_OrbitRadius_Current *= GlobalManager.instance._global_ObjScale;
+        _easyView_OrbitRadius_Current *= GlobalManager.instance._global_Scale;
 
 //        Debug.Log("scale: " + transform.localScale);
 //        Debug.Log("Orbit: " + _easyView_OrbitRadius_Current);
@@ -78,20 +81,28 @@ public class AstronomicalObject : MonoBehaviour
                 astroObj._easyView_OrbitCenter = transform;
             
             GameObject obj = Instantiate(astroObj.gameObject);
-            astroObj.name = obj.name;
+            astroObj.planetName = obj.name.Replace("(Clone)", "");
             obj.SetActive(true);
             obj.GetComponent<AstronomicalObject>().Init(i);
+            
             i++;
         }
     }
 
     public void SetCircle()
     {
-        
         Circle circle = gameObject.AddComponent<Circle>();
         
         circle.Init(_easyView_OrbitCenter.position.x, _easyView_OrbitCenter.position.z,
-            _easyView_OrbitRadius_Current, 1 );
+            _easyView_OrbitRadius_Current, 1 , this);
     }
+
+    public void SetUI()
+    {
+        GameObject nameBillboard = Instantiate(GlobalManager.instance.planetNameBillboard);
+        nameBillboard.GetComponent<PlanetUI>().target = this;
+    }
+
+    
 
 }

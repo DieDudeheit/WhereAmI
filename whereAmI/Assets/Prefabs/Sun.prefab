@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2356cbaa47e7c4a5c9a6b7280c240f87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Sun(Clone)
+  planetName: Sun
   diameter: 1400000
   currentProgress: 0
   _easyView_OrbitCenter: {fileID: 0}

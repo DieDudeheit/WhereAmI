@@ -17,7 +17,7 @@ public class Planet : AstronomicalObject
 
     private void Update()
     {
-        float tempProgress = Time.deltaTime * GlobalManager.instance._global_TimeSpeed / _easyView_OrbitTime;
+        float tempProgress = Time.deltaTime * GlobalManager.instance._global_TimeSpeed / (_easyView_OrbitTime * 24 * 60 * 60);
         currentProgress += tempProgress;
         
         base.SetTranform();

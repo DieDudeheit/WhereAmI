@@ -14,6 +14,7 @@ public class SolarSystem : AstronomicalObject
     public override void Init(int index)
     {
         this.systemIndex = index;
+        Camera.main.GetComponent<TiltNavigation>().SelectPlanet(_astronomicalObjects[index].transform);
         InitChilds();
     }
 }

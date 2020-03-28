@@ -14,14 +14,24 @@ public class GlobalManager : MonoBehaviour
     /// </summary>
     public float _global_TimeSpeed;
     public float _global_TimeStepSize;
+    public float _global_Scale;
     public float _global_ObjScale;
     [FormerlySerializedAs("_global_Normalize")] [Range(0,1)]
     public float _global_NormalizeDistance;
     [Range(0,1)]
     public float _global_NormalizeScale;
+
+    public string _progressStart;
+    private DateTime progressStartDate;
     
     [Range(16,180)]
     public int _global_CircleSegments;
+
+    [Header("UI Stuff")] 
+    public GameObject planetNameBillboard;
+    public float billboardScale;
+    
+    
     private void Awake()
     {
         if (instance == null)
@@ -32,6 +42,18 @@ public class GlobalManager : MonoBehaviour
         {
             Destroy(this);
         }
+        StringToDate();
     }
 
+    void StringToDate()
+    {
+        progressStartDate = DateTime.Parse(_progressStart);
+        Debug.Log(progressStartDate);
+    }
+
+    public float GetSecondsSinceProgressStart()
+    {
+        return (DateTime.Now - progressStartDate).Seconds;
+    }
+    
 }
