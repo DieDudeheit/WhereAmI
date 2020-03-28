@@ -51,9 +51,9 @@ public class GlobalManager : MonoBehaviour
         Debug.Log(progressStartDate);
     }
 
-    public float GetSecondsSinceProgressStart()
+    public TimeSpan GetTimeSpanSinceProgressStart()
     {
-        return (DateTime.Now - progressStartDate).Seconds;
+        return DateTime.Now - progressStartDate;
     }
     
 }

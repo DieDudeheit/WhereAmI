@@ -24,6 +24,12 @@ public class AstronomicalObject : MonoBehaviour
     /// </summary>
     public float currentProgress;
 
+    /// <summary>
+    /// CurrentProgress in Days
+    /// </summary>
+    public float currentProgressStart;
+
+    
     #region easyView
 
         [Header("Easy view")]
@@ -47,6 +53,7 @@ public class AstronomicalObject : MonoBehaviour
     public virtual void Init(int index)
     {
         this.systemIndex = index;
+        SetCurrentProgress();
         SetTranform();
         InitChilds();
         SetCircle();
@@ -103,6 +110,12 @@ public class AstronomicalObject : MonoBehaviour
         nameBillboard.GetComponent<PlanetUI>().target = this;
     }
 
-    
+    public void SetCurrentProgress()
+    {
+        TimeSpan ts = GlobalManager.instance.GetTimeSpanSinceProgressStart();
+        float days = (float) ts.TotalSeconds / 60.0f/ 60.0f /24.0f;
+        currentProgress = currentProgressStart + days / _easyView_OrbitTime;
+        Debug.Log("Name: " + planetName + "; Days from Origin: " + days + "; Progress: " + currentProgress);
+    }
 
 }

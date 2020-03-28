@@ -107,9 +107,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c53211097684575b4addae404f07b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  planetName: Earth(Clone)
+  planetName: Earth
   diameter: 12756
   currentProgress: 0
+  currentProgressStart: 0.9805555
   _easyView_OrbitCenter: {fileID: 0}
   _easyView_OrbitRadius: 149.6
   _easyView_OrbitRadius_Current: 0

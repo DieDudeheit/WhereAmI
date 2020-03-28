@@ -260,6 +260,7 @@ MonoBehaviour:
   planetName: Sol System
   diameter: 1000000
   currentProgress: 0
+  currentProgressStart: 0
   _easyView_OrbitCenter: {fileID: 0}
   _easyView_OrbitRadius: 0
   _easyView_OrbitRadius_Current: 0
@@ -389,7 +390,9 @@ MonoBehaviour:
   lookAt: {fileID: 1095082799}
   sensitivity: 2
   minDistance: -3
-  maxDistance: -15000
+  maxDistance: -11000
+  currentMinDistance: 0
+  currentMaxDistance: 0
 --- !u!114 &842049733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -485,8 +488,8 @@ MonoBehaviour:
   _global_ObjScale: 1
   _global_NormalizeDistance: 0
   _global_NormalizeScale: 0
-  _progressStart: 3/28/2020
-  _global_CircleSegments: 51
+  _progressStart: 6/14/2020 00:00:00
+  _global_CircleSegments: 70
   planetNameBillboard: {fileID: 5169154864203001522, guid: b8f4c8e89d864404f90cf44c49119380,
     type: 3}
   billboardScale: 2.3

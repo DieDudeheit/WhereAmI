@@ -18,8 +18,11 @@ public class TiltNavigation : MonoBehaviour
     private float currentDistance = -10;
     private float normalizedValueOld;
     public float minDistance = -0.75f;
-    public float maxDistance = -12000f;
+    public float maxDistance = -8000f;
 
+    public float currentMinDistance;
+    public float currentMaxDistance;
+    
     private void Start()
     {
         normalizedValueOld = GlobalManager.instance._global_NormalizeDistance;
@@ -70,17 +73,21 @@ public class TiltNavigation : MonoBehaviour
         else if (normalizedValueOld > globalNorDistVal)
             currentDistance += currentDistance * globalNorDistVal * 0.25f;
         normalizedValueOld = globalNorDistVal;
+
+        currentMinDistance = minDistance - minDistance * globalNorDistVal + maxDistance * globalNorDistVal * 0.03f;
+        currentMaxDistance = maxDistance - maxDistance * globalNorDistVal * 0.9f;
         
-        if (currentDistance > minDistance)
+        if (currentDistance > currentMinDistance)
         {
-            currentDistance = minDistance;
+            currentDistance = currentMinDistance;
         } 
-        else if (currentDistance < maxDistance)
+        else if (currentDistance < currentMaxDistance)
         {
-            currentDistance = maxDistance;
+            currentDistance = currentMaxDistance;
         }
 
-        SetDistance(currentDistance);
+//        SetDistance(currentDistance);
+        SetDistanceUnscaled(currentDistance);
 //        CheckTranslation();
     }
 
@@ -105,6 +112,13 @@ public class TiltNavigation : MonoBehaviour
         var localPosition = transform.localPosition;
         localPosition = new Vector3(localPosition.x, localPosition.y, currentDistance);
         transform.localPosition = localPosition / lookAt.transform.localScale.x;
+    }
+    
+    public void SetDistanceUnscaled(float dist)
+    {
+        var localPosition = transform.localPosition;
+        localPosition = new Vector3(localPosition.x, localPosition.y, currentDistance);
+        transform.localPosition = localPosition;
     }
 
     private void CheckTranslation()

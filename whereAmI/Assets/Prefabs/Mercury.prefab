@@ -106,9 +106,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c53211097684575b4addae404f07b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Mercury
+  planetName: Mercury
   diameter: 4879
   currentProgress: 0
+  currentProgressStart: 0.8777778
   _easyView_OrbitCenter: {fileID: 0}
   _easyView_OrbitRadius: 57.91
   _easyView_OrbitRadius_Current: 0
