@@ -27,9 +27,9 @@ public class PlanetUI : MonoBehaviour
         BillboardCanvasToMainCamera();
         float camDist = tn.GetDistance();
         //Set scale
-        float scale = Mathf.Abs(camDist * GlobalManager.instance._global_ObjScale/ 10);
+        float scale = Mathf.Abs(camDist * GlobalManager.instance._global_PlanetScale/ 10);
         SetScale(scale);
-        float height = Mathf.Pow(Mathf.Abs(camDist), 0.1f) * GlobalManager.instance.billboardScale * GlobalManager.instance._global_ObjScale;
+        float height = Mathf.Pow(Mathf.Abs(camDist), 0.1f) * GlobalManager.instance.billboardScale * GlobalManager.instance._global_PlanetScale;
         height = height -  0.5f * height * GlobalManager.instance._global_NormalizeDistance;
         SetHeight(height);
     }

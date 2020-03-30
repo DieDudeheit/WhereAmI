@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Experimental.PlayerLoop;
 
 public class TiltNavigation : MonoBehaviour
 {
@@ -22,7 +18,8 @@ public class TiltNavigation : MonoBehaviour
 
     public float currentMinDistance;
     public float currentMaxDistance;
-    
+
+    private bool isNavigating = false;
     private void Start()
     {
         normalizedValueOld = GlobalManager.instance._global_NormalizeDistance;
@@ -30,6 +27,7 @@ public class TiltNavigation : MonoBehaviour
 
     private void LateUpdate()
     {
+        bool isOverUI = !EventSystem.current.IsPointerOverGameObject();
         float globalNorDistVal = GlobalManager.instance._global_NormalizeDistance;
         //Set position
         if (selectedPlanet != null)
@@ -39,11 +37,20 @@ public class TiltNavigation : MonoBehaviour
             lookAt.transform.localScale = selectedPlanet.localScale;
         }
 
+
         //Set rotation
         currentPosition = Input.mousePosition;
         deltaPosition = currentPosition-lastPosition;
         lastPosition = currentPosition;
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0) && isOverUI)
+        {
+            isNavigating = true;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            isNavigating = false;
+        }
+        if (isNavigating)
         {
             lookAt.transform.Rotate(0, deltaPosition.x, 0, Space.World);
             lookAt.transform.Rotate(-deltaPosition.y, 0, 0, Space.Self);
@@ -65,7 +72,8 @@ public class TiltNavigation : MonoBehaviour
         lookAt.transform.localScale = localScale;
         
         //scroll
-        currentDistance +=  -scroll * currentDistance/10;
+        if(isOverUI)
+            currentDistance +=  -scroll * currentDistance/10;
         
         //Global Normalized dist dependency
         if (normalizedValueOld < globalNorDistVal)
@@ -93,13 +101,19 @@ public class TiltNavigation : MonoBehaviour
 
     public void SelectPlanet(Transform target)
     {
-        if(selectedPlanet != null)
-            selectedPlanet.GetComponent<LineRenderer>().enabled = true;
+        if (selectedPlanet != null)
+        {
+            LineRenderer lrOld = selectedPlanet.GetComponent<LineRenderer>();
+                if(lrOld != null)
+                    lrOld.enabled = true;
+        }
         
         selectedPlanet = target;
         currentDistance = minDistance;
-
-        selectedPlanet.GetComponent<LineRenderer>().enabled = false;
+        
+        LineRenderer lrNew = selectedPlanet.GetComponent<LineRenderer>();
+        if(lrNew != null)    
+            lrNew.enabled = false;
     }
 
     public float GetDistance()

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class Circle : MonoBehaviour
@@ -10,6 +9,7 @@ public class Circle : MonoBehaviour
     public float posY;
     
     public float radius;
+    public float tilt;
     public int segments;
     public float lineWidth;
     public AstronomicalObject target;
@@ -27,31 +27,37 @@ public class Circle : MonoBehaviour
         this.target = target;
         
         _lr = gameObject.GetComponent<LineRenderer>();
-        if(_lr == null)
-            _lr = gameObject.AddComponent<LineRenderer>();
 
         tn = Camera.main.GetComponent<TiltNavigation>();
-
-        DrawCircle();
+        
+        if(_lr != null)
+            DrawCircle();
     }
 
     private void LateUpdate()
     {
         float camDist = tn.GetDistance();
         if (segments != GlobalManager.instance._global_CircleSegments || 
-            radius > target._easyView_OrbitRadius_Current || radius < target._easyView_OrbitRadius_Current)
+            radius > target._easyView_OrbitRadius_Current || radius < target._easyView_OrbitRadius_Current ||
+            tilt > target.current_OrbitTilt || tilt < target.current_OrbitTilt)
         {
             segments = GlobalManager.instance._global_CircleSegments;
             radius = target._easyView_OrbitRadius_Current;
             posX = target._easyView_OrbitCenter.position.x;
             posY = target._easyView_OrbitCenter.position.y;
-            DrawCircle();
+            tilt = target.current_OrbitTilt;
+            if(_lr != null)
+                DrawCircle();
         }
 
-        lineWidth = Mathf.Pow(Mathf.Abs(camDist/100), 0.8f);
-        float tempWith = lineWidth - (lineWidth * GlobalManager.instance._global_NormalizeDistance - 0.01f);  
-        _lr.startWidth = tempWith;
-        _lr.endWidth = tempWith;
+        if (_lr != null)
+        {
+            lineWidth = Mathf.Pow(Mathf.Abs(camDist/100), 0.8f);
+            float tempWith = lineWidth - (lineWidth * GlobalManager.instance._global_NormalizeDistance - 0.01f);  
+            _lr.startWidth = tempWith;
+            _lr.endWidth = tempWith;    
+        }
+        
     }
 
     void DrawCircle()
@@ -64,8 +70,8 @@ public class Circle : MonoBehaviour
         for (int i = 0; i <= segments; i++)
         {
             float t =  (i * 1.0f) / (segments * 1.0f) *  Mathf.PI * 2;
-            Vector2 tempPos2D = MathLib.GetCurrentPos_Circle(posX, posY, radius, t);
-            points [i] = new Vector3(tempPos2D.x, 0, tempPos2D.y);
+            Vector3 tempPos3D = MathLib.GetCurrentPos_Circle(posX, posY, radius, t, tilt);
+            points[i] = tempPos3D;
         } 
         _lr.SetPositions(points);
         

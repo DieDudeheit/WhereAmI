@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.Serialization;
 
 public class AstronomicalObject : MonoBehaviour
@@ -20,6 +14,18 @@ public class AstronomicalObject : MonoBehaviour
     /// </summary>
     public float diameter;
     /// <summary>
+    ///Full rotation time in days
+    /// </summary>
+    public float axisRotationTime;
+    /// <summary>
+    ///Planet axis rotation 1 = 100%
+    /// </summary>
+    public float currentAxisRotationProgress;
+    /// <summary>
+    ///Planet axis tilt in degrees
+    /// </summary>
+    public float nativeAxisTilt;
+    /// <summary>
     /// CurrentProgress in Days
     /// </summary>
     public float currentProgress;
@@ -29,7 +35,6 @@ public class AstronomicalObject : MonoBehaviour
     /// </summary>
     public float currentProgressStart;
 
-    
     #region easyView
 
         [Header("Easy view")]
@@ -48,12 +53,21 @@ public class AstronomicalObject : MonoBehaviour
     
     #endregion
 
+    #region correctView
+
+        [Header("Correct view")]
+        public float _correctView_OrbitTilt;
+        public float current_OrbitTilt;
+
+    #endregion
+
     public List<AstronomicalObject> _astronomicalObjects = new List<AstronomicalObject>();
 
     public virtual void Init(int index)
     {
         this.systemIndex = index;
         SetCurrentProgress();
+        SetAxisTilt();
         SetTranform();
         InitChilds();
         SetCircle();
@@ -68,12 +82,15 @@ public class AstronomicalObject : MonoBehaviour
         //Scaling
         float normalizedScaleValue = diameter - diameter * GlobalManager.instance._global_NormalizeScale; 
         transform.localScale = Vector3.one * GlobalManager.instance._global_NormalizeScale + Vector3.one * (normalizedScaleValue/1000000.0f);
-        transform.localScale *= GlobalManager.instance._global_Scale * GlobalManager.instance._global_ObjScale;
+        transform.localScale *= GlobalManager.instance._global_Scale * GlobalManager.instance._global_PlanetScale;
         
         //diameter
         float normalizedOrbitRadius = _easyView_OrbitRadius - _easyView_OrbitRadius * Mathf.Pow(GlobalManager.instance._global_NormalizeDistance, 0.25f);
         _easyView_OrbitRadius_Current = systemIndex * GlobalManager.instance._global_NormalizeDistance + normalizedOrbitRadius;
         _easyView_OrbitRadius_Current *= GlobalManager.instance._global_Scale;
+        
+        //Orbit Tilt
+        current_OrbitTilt = _correctView_OrbitTilt - _correctView_OrbitTilt * Mathf.Pow(GlobalManager.instance._global_NormalizeOrbitTilts, 0.25f);
 
 //        Debug.Log("scale: " + transform.localScale);
 //        Debug.Log("Orbit: " + _easyView_OrbitRadius_Current);
@@ -88,7 +105,8 @@ public class AstronomicalObject : MonoBehaviour
                 astroObj._easyView_OrbitCenter = transform;
             
             GameObject obj = Instantiate(astroObj.gameObject);
-            astroObj.planetName = obj.name.Replace("(Clone)", "");
+            obj.name = obj.name.Replace("(Clone)", "");
+            astroObj.planetName = obj.name;
             obj.SetActive(true);
             obj.GetComponent<AstronomicalObject>().Init(i);
             
@@ -115,7 +133,21 @@ public class AstronomicalObject : MonoBehaviour
         TimeSpan ts = GlobalManager.instance.GetTimeSpanSinceProgressStart();
         float days = (float) ts.TotalSeconds / 60.0f/ 60.0f /24.0f;
         currentProgress = currentProgressStart + days / _easyView_OrbitTime;
-        Debug.Log("Name: " + planetName + "; Days from Origin: " + days + "; Progress: " + currentProgress);
+//        Debug.Log("Name: " + planetName + "; Days from Origin: " + days + "; Progress: " + currentProgress);
     }
 
+    public void SetAxisTilt()
+    {
+        transform.Rotate(-nativeAxisTilt, 0, 0, Space.World);
+    }
+
+    public void UpdateRotation()
+    {
+        transform.Rotate(0, currentAxisRotationProgress * 360, 0, Space.Self);
+    }
+
+    void OnMouseDown()
+    {
+        Camera.main.GetComponent<TiltNavigation>().SelectPlanet(transform);
+    }
 }

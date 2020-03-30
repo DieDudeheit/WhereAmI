@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.Serialization;
 
 public class GlobalManager : MonoBehaviour
@@ -13,13 +10,15 @@ public class GlobalManager : MonoBehaviour
     /// 1 = realtime
     /// </summary>
     public float _global_TimeSpeed;
-    public float _global_TimeStepSize;
+    [FormerlySerializedAs("_global_TimeStepSize")] public float _global_UpdateTime;
     public float _global_Scale;
-    public float _global_ObjScale;
+    [FormerlySerializedAs("_global_ObjScale")] public float _global_PlanetScale;
     [FormerlySerializedAs("_global_Normalize")] [Range(0,1)]
     public float _global_NormalizeDistance;
     [Range(0,1)]
     public float _global_NormalizeScale;
+    [Range(0,1)]
+    public float _global_NormalizeOrbitTilts;
 
     public string _progressStart;
     private DateTime progressStartDate;
@@ -56,4 +55,9 @@ public class GlobalManager : MonoBehaviour
         return DateTime.Now - progressStartDate;
     }
     
+    public TimeSpan GetTimeSpanSinceProgressStart(DateTime dateTime)
+    {
+        return dateTime.Date - progressStartDate;
+    }
+
 }
